@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955" minHeight="600"
+			   initialize="configAppMeasurement();"
+			   >
+	<fx:Declarations>
+		<s:TitleWindow id="ttlWndw"
+					   title="Spark TitleWindow title"
+					   width="300" height="200"
+					   close="ttlWndw_close(event);" />
+			
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.omniture.AppMeasurement;
+			
+			import mx.core.IFlexDisplayObject;
+			import mx.events.CloseEvent;
+			import mx.managers.PopUpManager;
+			
+			public var s:AppMeasurement;
+			
+			//This function will load when the page load and will call s.track() 
+			//that will send an image request to adobe servers. 
+			//It will be a page view
+			private function configAppMeasurement():void {
+				s = new AppMeasurement();
+				s.debugTracking = true;
+				s.trackLocal = true;
+				s.account = "edirocks";
+				s.pageName = "FLEX test"
+				s.pageURL = "http://www.mywebsite.com";
+				s.visitorNamespace = "cardgagecorp";
+				s.autoTrack = false;
+				s.charSet = "UTF-8";
+				s.trackingServer="cardgagecorp.112.2o7.net";
+				//Send the pageview image request
+				s.track();
+				
+				
+			}
+			
+			private function clickButton(evt:MouseEvent):void {
+				PopUpManager.addPopUp(ttlWndw, this, true);
+				PopUpManager.centerPopUp(ttlWndw);
+				
+				//BEGINNING OMNITURE LINK TRACKING CODE
+				//This code will send data when the button is clicked. It should a custom link tracking pe="lnk_o"
+				s.prop4=s.pageName + "LinkFLEXtest";
+				s.lightTrackVars = "prop4"
+				//send the link tracking image request
+				s.trackLink("http://mywebsite.com/linktest.html","o","Test Flex pop up window");
+				//END OMNITURE LINK TRACKING CODE
+				
+			}
+			
+			protected function ttlWndw_close(evt:CloseEvent):void {
+				PopUpManager.removePopUp(evt.currentTarget as IFlexDisplayObject);
+			}
+			
+		]]>
+	</fx:Script>
+	
+	
+	
+	<!--On Click on this button the function clickButton will be called-->
+	<s:controlBarContent>
+		<s:Button id="btn"
+				  label="Show TitleWindow"
+				  click="clickButton(event);" />
+	</s:controlBarContent>
+	
+</s:Application>
